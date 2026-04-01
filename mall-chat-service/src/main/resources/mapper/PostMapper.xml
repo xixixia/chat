@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mallchat.mapper.PostMapper">
+  <resultMap id="PostListItemMap" type="com.mallchat.vo.PostListItem">
+    <id property="id" column="id" />
+    <result property="userId" column="user_id" />
+    <result property="title" column="title" />
+    <result property="content" column="content" />
+    <result property="categoryId" column="category_id" />
+    <result property="auditStatus" column="audit_status" />
+    <result property="categoryName" column="category_name" />
+    <result property="tagNames" column="tag_names" />
+    <result property="createdAt" column="created_at" />
+  </resultMap>
+
+  <resultMap id="PostDetailMap" type="com.mallchat.vo.PostDetail">
+    <id property="id" column="id" />
+    <result property="userId" column="user_id" />
+    <result property="title" column="title" />
+    <result property="content" column="content" />
+    <result property="categoryId" column="category_id" />
+    <result property="auditStatus" column="audit_status" />
+    <result property="categoryName" column="category_name" />
+    <result property="tagNames" column="tag_names" />
+    <result property="createdAt" column="created_at" />
+  </resultMap>
+
+  <select id="list" resultMap="PostListItemMap">
+    SELECT
+      p.id,
+      p.user_id,
+      p.title,
+      p.content,
+      p.created_at,
+      p.category_id,
+      p.audit_status,
+      c.name AS category_name,
+      GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ',') AS tag_names
+    FROM post p
+    JOIN category c ON p.category_id = c.id AND c.status = 1
+    LEFT JOIN post_tag pt ON p.id = pt.post_id
+    LEFT JOIN tag t ON pt.tag_id = t.id AND t.status = 1
+    WHERE p.status = 1 AND p.audit_status = 1
+    <if test="title != null and title != ''">
+      AND p.title LIKE CONCAT('%', #{title}, '%')
+    </if>
+    <if test="categoryId != null">
+      AND p.category_id = #{categoryId}
+    </if>
+    GROUP BY p.id
+    ORDER BY p.created_at DESC
+    LIMIT #{limit} OFFSET #{offset}
+  </select>
+
+  <select id="listByUserId" resultMap="PostListItemMap">
+    SELECT
+      p.id,
+      p.user_id,
+      p.title,
+      p.content,
+      p.created_at,
+      p.category_id,
+      p.audit_status,
+      c.name AS category_name,
+      GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ',') AS tag_names
+    FROM post p
+    JOIN category c ON p.category_id = c.id AND c.status = 1
+    LEFT JOIN post_tag pt ON p.id = pt.post_id
+    LEFT JOIN tag t ON pt.tag_id = t.id AND t.status = 1
+    WHERE p.status = 1 AND p.user_id = #{userId}
+    GROUP BY p.id
+    ORDER BY p.created_at DESC
+    LIMIT #{limit} OFFSET #{offset}
+  </select>
+
+  <select id="countByTitle" resultType="long">
+    SELECT COUNT(1)
+    FROM post p
+    JOIN category c ON p.category_id = c.id AND c.status = 1
+    WHERE p.status = 1 AND p.audit_status = 1
+    <if test="title != null and title != ''">
+      AND p.title LIKE CONCAT('%', #{title}, '%')
+    </if>
+    <if test="categoryId != null">
+      AND p.category_id = #{categoryId}
+    </if>
+  </select>
+
+  <select id="countByUserId" resultType="long">
+    SELECT COUNT(1)
+    FROM post p
+    JOIN category c ON p.category_id = c.id AND c.status = 1
+    WHERE p.status = 1 AND p.user_id = #{userId}
+  </select>
+
+  <select id="findById" resultMap="PostDetailMap">
+    SELECT
+      p.id,
+      p.user_id,
+      p.title,
+      p.content,
+      p.created_at,
+      p.category_id,
+      p.audit_status,
+      c.name AS category_name,
+      GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ',') AS tag_names
+    FROM post p
+    JOIN category c ON p.category_id = c.id AND c.status = 1
+    LEFT JOIN post_tag pt ON p.id = pt.post_id
+    LEFT JOIN tag t ON pt.tag_id = t.id AND t.status = 1
+    WHERE p.id = #{id} AND p.status = 1 AND p.audit_status = 1
+    GROUP BY p.id
+  </select>
+
+  <select id="findByIdRaw" resultType="com.mallchat.model.Post">
+    SELECT
+      id,
+      user_id,
+      category_id,
+      title,
+      content,
+      status,
+      audit_status,
+      audit_reason,
+      audit_updated_at,
+      created_at,
+      updated_at
+    FROM post
+    WHERE id = #{id}
+  </select>
+
+  <insert id="insert" parameterType="com.mallchat.model.Post" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO post (user_id, category_id, title, content, status, audit_status, audit_reason, audit_updated_at)
+    VALUES (#{userId}, #{categoryId}, #{title}, #{content}, #{status}, #{auditStatus}, #{auditReason}, #{auditUpdatedAt})
+  </insert>
+
+  <update id="deleteById">
+    UPDATE post
+    SET status = 0
+    WHERE id = #{id}
+  </update>
+
+  <update id="updateAuditStatus">
+    UPDATE post
+    SET audit_status = #{auditStatus},
+        audit_reason = #{auditReason},
+        audit_updated_at = CURRENT_TIMESTAMP
+    WHERE id = #{id}
+  </update>
+</mapper>

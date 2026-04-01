@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mallchat.auth.mapper.UserAccountMapper">
+    <resultMap id="UserAccountMap" type="com.mallchat.auth.model.UserAccount">
+        <id property="id" column="id" />
+        <result property="username" column="username" />
+        <result property="passwordHash" column="password_hash" />
+        <result property="nickname" column="nickname" />
+        <result property="avatarUrl" column="avatar_url" />
+        <result property="status" column="status" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <select id="findByUsername" resultMap="UserAccountMap">
+        SELECT id, username, password_hash, nickname, avatar_url, status, created_at, updated_at
+        FROM user_account
+        WHERE username = #{username}
+        LIMIT 1
+    </select>
+
+    <select id="findById" resultMap="UserAccountMap">
+        SELECT id, username, password_hash, nickname, avatar_url, status, created_at, updated_at
+        FROM user_account
+        WHERE id = #{id}
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.mallchat.auth.model.UserAccount" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_account (username, password_hash, nickname, avatar_url, status)
+        VALUES (#{username}, #{passwordHash}, #{nickname}, #{avatarUrl}, #{status})
+    </insert>
+
+    <update id="updateProfile">
+        UPDATE user_account
+        SET nickname = #{nickname},
+            avatar_url = #{avatarUrl}
+        WHERE id = #{id}
+    </update>
+</mapper>

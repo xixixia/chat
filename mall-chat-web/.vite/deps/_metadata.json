@@ -1,0 +1,29 @@
+{
+  "hash": "e77b73e8",
+  "browserHash": "7303600e",
+  "optimized": {
+    "@toast-ui/editor": {
+      "src": "../../node_modules/@toast-ui/editor/dist/esm/index.js",
+      "file": "@toast-ui_editor.js",
+      "fileHash": "ee880c76",
+      "needsInterop": false
+    },
+    "vue": {
+      "src": "../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
+      "file": "vue.js",
+      "fileHash": "65ccb38e",
+      "needsInterop": false
+    },
+    "vue-router": {
+      "src": "../../node_modules/vue-router/dist/vue-router.mjs",
+      "file": "vue-router.js",
+      "fileHash": "90a2d9c4",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-RZZXYUDO": {
+      "file": "chunk-RZZXYUDO.js"
+    }
+  }
+}

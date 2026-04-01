@@ -1,0 +1,67 @@
+﻿server:
+  port: 8080
+
+spring:
+  application:
+    name: mall-chat-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/mall_chat?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0
+    timeout: 5000
+  mail:
+    host: smtp.qq.com
+    port: 465
+    username: your-email@qq.com
+    password: your-smtp-auth-code
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        service-name: mall-chat-service
+        heartbeat:
+          enabled: true
+
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+app:
+  jwt:
+    secret: mall-chat-auth-default-secret-32
+    expire-minutes: 120
+  sms:
+    secret-id: your-secret-id
+    secret-key: your-secret-key
+    sdk-app-id: your-sms-sdk-app-id
+    sign-name: your-sign-name
+    template-id: your-template-id
+    endpoint: sms.tencentcloudapi.com
+    region: ap-guangzhou
+  email:
+    subject: Mall Chat 验证码
+  tag:
+    model-endpoint:
+  verify:
+    expire-minutes: 5
+    send-interval-seconds: 60
+    max-attempts: 5
+  captcha:
+    expire-minutes: 5
+  moderation:
+    admin-user-ids: 1

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mallchat.mapper.ContentAuditMapper">
+  <select id="listByStatus" resultType="com.mallchat.model.ContentAudit">
+    SELECT id, biz_type, biz_id, status, hit_level, hit_words, operator_id, reason, created_at, updated_at
+    FROM content_audit
+    <if test="status != null">
+      WHERE status = #{status}
+    </if>
+    ORDER BY created_at DESC
+    LIMIT #{limit} OFFSET #{offset}
+  </select>
+
+  <select id="countByStatus" resultType="long">
+    SELECT COUNT(1)
+    FROM content_audit
+    <if test="status != null">
+      WHERE status = #{status}
+    </if>
+  </select>
+
+  <select id="findById" resultType="com.mallchat.model.ContentAudit">
+    SELECT id, biz_type, biz_id, status, hit_level, hit_words, operator_id, reason, created_at, updated_at
+    FROM content_audit
+    WHERE id = #{id}
+  </select>
+
+  <insert id="insert" parameterType="com.mallchat.model.ContentAudit" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO content_audit
+      (biz_type, biz_id, status, hit_level, hit_words, operator_id, reason)
+    VALUES
+      (#{bizType}, #{bizId}, #{status}, #{hitLevel}, #{hitWords}, #{operatorId}, #{reason})
+  </insert>
+
+  <update id="updateStatus">
+    UPDATE content_audit
+    SET status = #{status},
+        reason = #{reason},
+        operator_id = #{operatorId},
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = #{id}
+  </update>
+</mapper>

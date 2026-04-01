@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mallchat.mapper.SignRecordMapper">
+    <insert id="insertIgnore" parameterType="com.mallchat.model.SignRecord">
+        INSERT IGNORE INTO sign_record (user_id, sign_date, sign_time, is_retro, reward_status)
+        VALUES (#{userId}, #{signDate}, #{signTime}, #{isRetro}, #{rewardStatus})
+    </insert>
+</mapper>

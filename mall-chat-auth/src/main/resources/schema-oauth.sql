@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS user_oauth (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT 'OAuth记录ID',
+    user_id BIGINT NOT NULL COMMENT '用户ID',
+    provider VARCHAR(32) NOT NULL COMMENT '第三方平台标识',
+    open_id VARCHAR(128) NOT NULL COMMENT '第三方OpenID',
+    union_id VARCHAR(128) DEFAULT NULL COMMENT '第三方UnionID',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    UNIQUE KEY uk_provider_openid (provider, open_id),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户第三方登录绑定';

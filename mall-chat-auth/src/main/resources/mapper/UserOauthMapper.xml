@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mallchat.auth.oauth.mapper.UserOauthMapper">
+    <resultMap id="UserOauthMap" type="com.mallchat.auth.oauth.model.UserOauth">
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="provider" column="provider" />
+        <result property="openId" column="open_id" />
+        <result property="unionId" column="union_id" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
+    </resultMap>
+
+    <select id="findByProviderAndOpenId" resultMap="UserOauthMap">
+        SELECT id, user_id, provider, open_id, union_id, created_at, updated_at
+        FROM user_oauth
+        WHERE provider = #{provider} AND open_id = #{openId}
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.mallchat.auth.oauth.model.UserOauth" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_oauth (user_id, provider, open_id, union_id)
+        VALUES (#{userId}, #{provider}, #{openId}, #{unionId})
+    </insert>
+</mapper>

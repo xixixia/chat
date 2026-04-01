@@ -1,0 +1,33 @@
+@baseUrl = http://localhost:8080
+
+### Health check
+GET {{baseUrl}}/health
+
+### DB health check
+GET {{baseUrl}}/health/db
+
+### List posts
+GET {{baseUrl}}/posts?page=1&size=10
+
+### Create post
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "title": "Hello",
+  "content": "First post"
+}
+
+### List comments by post
+GET {{baseUrl}}/comments?postId=1
+
+### Create comment
+POST {{baseUrl}}/comments
+Content-Type: application/json
+
+{
+  "postId": 1,
+  "userId": 1,
+  "content": "Nice post"
+}

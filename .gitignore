@@ -1,0 +1,50 @@
+# Maven
+target/
+
+# Gradle
+build/
+.gradle/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Temporary files
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.*
+
+# Node
+node_modules/
+
+# Frontend build
+dist/
+
+# Coverage
+coverage/
+
+# Local config
+application-local.yml
+application-dev.yml
