@@ -56,6 +56,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private boolean requiresAuth(HttpServletRequest request) {
         String path = request.getRequestURI();
         String method = request.getMethod();
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            return false;
+        }
         if (MATCHER.match("/health/**", path) || MATCHER.match("/register/**", path)) {
             return false;
         }
