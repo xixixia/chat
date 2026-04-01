@@ -94,4 +94,28 @@ public interface PostMapper {
     int updateAuditStatus(@Param("id") Long id,
                           @Param("auditStatus") Integer auditStatus,
                           @Param("auditReason") String auditReason);
+
+    /**
+     * Increase post like count by 1.
+     *
+     * @param id post ID
+     * @return rows affected
+     */
+    int increaseLikeCount(@Param("id") Long id);
+
+    /**
+     * Decrease post like count by 1 (not lower than 0).
+     *
+     * @param id post ID
+     * @return rows affected
+     */
+    int decreaseLikeCount(@Param("id") Long id);
+
+    /**
+     * Query post like count by ID.
+     *
+     * @param id post ID
+     * @return like count
+     */
+    Long findLikeCountById(@Param("id") Long id);
 }

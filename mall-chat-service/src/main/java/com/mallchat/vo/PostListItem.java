@@ -34,6 +34,12 @@ public class PostListItem {
     /** Tag list. */
     private List<String> tags;
 
+    /** Like count. */
+    private Long likeCount;
+
+    /** Whether current user liked this post. */
+    private Boolean likedByMe;
+
     @JsonIgnore
     private String tagNames;
 

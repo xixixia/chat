@@ -7,3 +7,4 @@ export * from "./register";
 export * from "./qq";
 export * from "./category";
 export * from "./sign";
+export * from "./like";

@@ -3,6 +3,14 @@
     <div class="detail-header">
       <t-button variant="text" @click="goBack">返回</t-button>
       <t-button
+        v-if="post"
+        variant="outline"
+        :loading="likingPost"
+        @click="toggleLike"
+      >
+        {{ post.likedByMe ? "Unlike" : "Like" }} ({{ post.likeCount || 0 }})
+      </t-button>
+      <t-button
         v-if="post && canDelete(post.userId)"
         theme="danger"
         variant="outline"
@@ -113,8 +121,10 @@ import {
   fetchPost,
   getCurrentUser,
   getToken,
+  likePost,
   type CommentItem,
-  type PostDetail
+  type PostDetail,
+  unlikePost
 } from "../api";
 
 const route = useRoute();
@@ -125,6 +135,7 @@ const post = ref<PostDetail | null>(null);
 const loading = ref(false);
 const error = ref("");
 const deletingPost = ref(false);
+const likingPost = ref(false);
 
 const comments = ref<CommentItem[]>([]);
 const commentsLoading = ref(false);
@@ -280,6 +291,29 @@ async function removePost() {
     error.value = err instanceof Error ? err.message : "删除失败";
   } finally {
     deletingPost.value = false;
+  }
+}
+
+async function toggleLike() {
+  if (!post.value) {
+    return;
+  }
+  if (!ensureLogin()) {
+    return;
+  }
+  if (likingPost.value) {
+    return;
+  }
+  refreshUser();
+  likingPost.value = true;
+  try {
+    const result = post.value.likedByMe ? await unlikePost(post.value.id) : await likePost(post.value.id);
+    post.value.likedByMe = result.likedByMe;
+    post.value.likeCount = result.likeCount;
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : "Like failed";
+  } finally {
+    likingPost.value = false;
   }
 }
 

@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS post (
   title VARCHAR(120) NOT NULL COMMENT '标题',
   content TEXT NOT NULL COMMENT '内容',
   status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1正常，0删除',
+  like_count BIGINT NOT NULL DEFAULT 0 COMMENT '点赞数',
   audit_status TINYINT NOT NULL DEFAULT 1 COMMENT '审核状态：0待审，1通过，2拒绝',
   audit_reason VARCHAR(255) DEFAULT NULL COMMENT '审核原因',
   audit_updated_at DATETIME DEFAULT NULL COMMENT '审核时间',
@@ -153,3 +154,17 @@ CREATE TABLE IF NOT EXISTS user_notification (
   INDEX idx_notification_post (post_id),
   INDEX idx_notification_target (target_type, target_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='站内信提醒';
+
+-- Likes
+CREATE TABLE IF NOT EXISTS user_like (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '点赞记录ID',
+  user_id BIGINT NOT NULL COMMENT '用户ID',
+  target_type VARCHAR(16) NOT NULL COMMENT '目标类型：post/comment',
+  target_id BIGINT NOT NULL COMMENT '目标ID',
+  status TINYINT NOT NULL DEFAULT 1 COMMENT '状态：1点赞，0取消',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  UNIQUE KEY uk_user_target (user_id, target_type, target_id),
+  INDEX idx_target_status (target_type, target_id, status),
+  INDEX idx_user_status (user_id, status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户点赞记录';

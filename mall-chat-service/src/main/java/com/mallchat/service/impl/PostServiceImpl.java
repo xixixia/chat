@@ -15,6 +15,7 @@ import com.mallchat.moderation.ModerationAction;
 import com.mallchat.moderation.ModerationBizType;
 import com.mallchat.moderation.ModerationResult;
 import com.mallchat.service.ContentAuditService;
+import com.mallchat.service.LikeService;
 import com.mallchat.service.ModerationService;
 import com.mallchat.service.PostService;
 import com.mallchat.service.TagService;
@@ -36,6 +37,7 @@ public class PostServiceImpl implements PostService {
     private final TagMapper tagMapper;
     private final PostTagMapper postTagMapper;
     private final TagService tagService;
+    private final LikeService likeService;
     private final ModerationService moderationService;
     private final ContentAuditService contentAuditService;
 
@@ -44,6 +46,7 @@ public class PostServiceImpl implements PostService {
                            TagMapper tagMapper,
                            PostTagMapper postTagMapper,
                            TagService tagService,
+                           LikeService likeService,
                            ModerationService moderationService,
                            ContentAuditService contentAuditService) {
         this.postMapper = postMapper;
@@ -51,6 +54,7 @@ public class PostServiceImpl implements PostService {
         this.tagMapper = tagMapper;
         this.postTagMapper = postTagMapper;
         this.tagService = tagService;
+        this.likeService = likeService;
         this.moderationService = moderationService;
         this.contentAuditService = contentAuditService;
     }
@@ -64,7 +68,7 @@ public class PostServiceImpl implements PostService {
      * @return 分页结果
      */
     @Override
-    public PageResult<PostListItem> list(int page, int size, String title, Long categoryId) {
+    public PageResult<PostListItem> list(int page, int size, String title, Long categoryId, Long currentUserId) {
         int safePage = Math.max(page, 1);
         int safeSize = Math.min(Math.max(size, 1), 50);
         int offset = (safePage - 1) * safeSize;
@@ -74,6 +78,7 @@ public class PostServiceImpl implements PostService {
         }
         List<PostListItem> list = postMapper.list(offset, safeSize, keyword, categoryId);
         applyTagNames(list);
+        likeService.fillPostLikeInfo(list, currentUserId);
         Long total = postMapper.countByTitle(keyword, categoryId);
         return PageResult.of(total, list);
     }
@@ -87,12 +92,13 @@ public class PostServiceImpl implements PostService {
      * @return 分页结果
      */
     @Override
-    public PageResult<PostListItem> listByUserId(Long userId, int page, int size) {
+    public PageResult<PostListItem> listByUserId(Long userId, int page, int size, Long currentUserId) {
         int safePage = Math.max(page, 1);
         int safeSize = Math.min(Math.max(size, 1), 50);
         int offset = (safePage - 1) * safeSize;
         List<PostListItem> list = postMapper.listByUserId(userId, offset, safeSize);
         applyTagNames(list);
+        likeService.fillPostLikeInfo(list, currentUserId);
         Long total = postMapper.countByUserId(userId);
         return PageResult.of(total, list);
     }
@@ -153,9 +159,10 @@ public class PostServiceImpl implements PostService {
      * @return 帖子详情
      */
     @Override
-    public PostDetail findById(Long id) {
+    public PostDetail findById(Long id, Long currentUserId) {
         PostDetail detail = postMapper.findById(id);
         applyTagNames(detail);
+        likeService.fillPostLikeInfo(detail, currentUserId);
         return detail;
     }
 

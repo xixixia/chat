@@ -56,6 +56,14 @@
               </t-space>
             </div>
             <t-space size="small" class="item-actions">
+              <t-button
+                variant="outline"
+                size="small"
+                :loading="isLikeLoading(post.id)"
+                @click="toggleLike(post)"
+              >
+                {{ post.likedByMe ? "Unlike" : "Like" }} ({{ post.likeCount || 0 }})
+              </t-button>
               <t-button variant="text" @click="goDetail(post.id)">Details</t-button>
               <t-button v-if="canDelete(post.userId)" theme="danger" variant="outline" @click="removePost(post.id)">
                 Delete
@@ -79,8 +87,10 @@ import {
   fetchPosts,
   getCurrentUser,
   getToken,
+  likePost,
   type CategoryItem,
-  type PostListItem
+  type PostListItem,
+  unlikePost
 } from "../api";
 
 const router = useRouter();
@@ -95,6 +105,7 @@ const size = 10;
 const jumpPage = ref(1);
 const searchTitle = ref("");
 const filterCategoryId = ref<number | null>(null);
+const likeLoadingIds = ref<Set<number>>(new Set());
 
 const totalPages = computed(() => Math.max(1, Math.ceil(total.value / size)));
 
@@ -147,6 +158,10 @@ function refreshUser() {
 
 function canDelete(authorId: number) {
   return currentUser.value?.userId === authorId;
+}
+
+function isLikeLoading(postId: number) {
+  return likeLoadingIds.value.has(postId);
 }
 
 function formatDate(val: string) {
@@ -208,6 +223,28 @@ async function removePost(id: number) {
     await loadPosts();
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Delete failed";
+  }
+}
+
+async function toggleLike(post: PostListItem) {
+  if (!ensureLogin()) {
+    return;
+  }
+  refreshUser();
+  if (likeLoadingIds.value.has(post.id)) {
+    return;
+  }
+  likeLoadingIds.value.add(post.id);
+  likeLoadingIds.value = new Set(likeLoadingIds.value);
+  try {
+    const result = post.likedByMe ? await unlikePost(post.id) : await likePost(post.id);
+    post.likedByMe = result.likedByMe;
+    post.likeCount = result.likeCount;
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : "Like failed";
+  } finally {
+    likeLoadingIds.value.delete(post.id);
+    likeLoadingIds.value = new Set(likeLoadingIds.value);
   }
 }
 

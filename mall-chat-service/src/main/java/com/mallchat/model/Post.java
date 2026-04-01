@@ -35,6 +35,9 @@ public class Post {
     /** Audit update time. */
     private LocalDateTime auditUpdatedAt;
 
+    /** Like count. */
+    private Long likeCount;
+
     /** Creation time. */
     private LocalDateTime createdAt;
 

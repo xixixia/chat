@@ -15,6 +15,8 @@ export type PostListItem = {
     auditStatus?: number;
     categoryName: string;
     tags: string[];
+    likeCount: number;
+    likedByMe: boolean;
 };
 
 export type PostDetail = {
@@ -27,6 +29,8 @@ export type PostDetail = {
     auditStatus?: number;
     categoryName: string;
     tags: string[];
+    likeCount: number;
+    likedByMe: boolean;
 };
 
 export type PostCreateRequest = {

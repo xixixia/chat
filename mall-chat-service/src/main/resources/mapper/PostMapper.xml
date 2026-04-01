@@ -12,6 +12,7 @@
     <result property="auditStatus" column="audit_status" />
     <result property="categoryName" column="category_name" />
     <result property="tagNames" column="tag_names" />
+    <result property="likeCount" column="like_count" />
     <result property="createdAt" column="created_at" />
   </resultMap>
 
@@ -24,6 +25,7 @@
     <result property="auditStatus" column="audit_status" />
     <result property="categoryName" column="category_name" />
     <result property="tagNames" column="tag_names" />
+    <result property="likeCount" column="like_count" />
     <result property="createdAt" column="created_at" />
   </resultMap>
 
@@ -36,6 +38,7 @@
       p.created_at,
       p.category_id,
       p.audit_status,
+      p.like_count,
       c.name AS category_name,
       GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ',') AS tag_names
     FROM post p
@@ -63,6 +66,7 @@
       p.created_at,
       p.category_id,
       p.audit_status,
+      p.like_count,
       c.name AS category_name,
       GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ',') AS tag_names
     FROM post p
@@ -104,6 +108,7 @@
       p.created_at,
       p.category_id,
       p.audit_status,
+      p.like_count,
       c.name AS category_name,
       GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ',') AS tag_names
     FROM post p
@@ -125,6 +130,7 @@
       audit_status,
       audit_reason,
       audit_updated_at,
+      like_count,
       created_at,
       updated_at
     FROM post
@@ -149,4 +155,22 @@
         audit_updated_at = CURRENT_TIMESTAMP
     WHERE id = #{id}
   </update>
+
+  <update id="increaseLikeCount">
+    UPDATE post
+    SET like_count = like_count + 1
+    WHERE id = #{id}
+  </update>
+
+  <update id="decreaseLikeCount">
+    UPDATE post
+    SET like_count = GREATEST(like_count - 1, 0)
+    WHERE id = #{id}
+  </update>
+
+  <select id="findLikeCountById" resultType="long">
+    SELECT like_count
+    FROM post
+    WHERE id = #{id}
+  </select>
 </mapper>

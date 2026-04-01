@@ -19,7 +19,7 @@ public interface PostService {
      * @param title 标题关键词（可选）
      * @return 分页结果
      */
-    PageResult<PostListItem> list(int page, int size, String title, Long categoryId);
+    PageResult<PostListItem> list(int page, int size, String title, Long categoryId, Long currentUserId);
 
     /**
      * 根据用户 ID 分页查询帖子。
@@ -29,7 +29,7 @@ public interface PostService {
      * @param size 每页数量
      * @return 分页结果
      */
-    PageResult<PostListItem> listByUserId(Long userId, int page, int size);
+    PageResult<PostListItem> listByUserId(Long userId, int page, int size, Long currentUserId);
 
     /**
      * 创建帖子。
@@ -53,7 +53,7 @@ public interface PostService {
      * @param id 帖子 ID
      * @return 帖子详情
      */
-    PostDetail findById(Long id);
+    PostDetail findById(Long id, Long currentUserId);
 
     /**
      * 软删除帖子。

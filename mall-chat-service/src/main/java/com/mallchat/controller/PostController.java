@@ -38,7 +38,8 @@ public class PostController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Long categoryId) {
-        return Result.ok(postService.list(page, size, title, categoryId));
+        Long userId = UserContext.getUserId();
+        return Result.ok(postService.list(page, size, title, categoryId, userId));
     }
 
     /** TODO: update docs. */
@@ -47,13 +48,14 @@ public class PostController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size) {
         Long userId = UserContext.getUserId();
-        return Result.ok(postService.listByUserId(userId, page, size));
+        return Result.ok(postService.listByUserId(userId, page, size, userId));
     }
 
     /** TODO: update docs. */
     @GetMapping("/{id}")
     public Result<PostDetail> detail(@PathVariable Long id) {
-        return Result.ok(postService.findById(id));
+        Long userId = UserContext.getUserId();
+        return Result.ok(postService.findById(id, userId));
     }
 
     /** TODO: update docs. */

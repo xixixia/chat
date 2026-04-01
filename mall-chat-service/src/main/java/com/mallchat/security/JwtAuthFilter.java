@@ -66,7 +66,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return !(MATCHER.match("/posts", path)
                     || MATCHER.match("/posts/*", path)
                     || MATCHER.match("/comments", path)
-                    || MATCHER.match("/categories", path));
+                    || MATCHER.match("/categories", path)
+                    || MATCHER.match("/likes/posts/status", path));
         }
         if ("POST".equals(method) && (MATCHER.match("/posts", path) || MATCHER.match("/comments", path))) {
             return true;
